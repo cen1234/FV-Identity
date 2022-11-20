@@ -14,6 +14,9 @@ public class Single {
     private String description;
     private String benefit;
     private double price;
+    private String link;
+    private String shop;
+    private String introduction;
 
     @TableField(exist = false)
     private String photo;

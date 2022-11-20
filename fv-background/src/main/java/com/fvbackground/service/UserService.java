@@ -57,6 +57,7 @@ public class UserService extends ServiceImpl<UserMapper,User> {
 
             //设置access_token
             userDto.setAccessToken(getAuth());
+            userDto.setSearchAccessToken(getSearchAuth());
 
             //获取用户角色对应的菜单功能
             String rolename = oneData.getRole();
@@ -128,6 +129,13 @@ public class UserService extends ServiceImpl<UserMapper,User> {
         return getAuth(clientId, clientSecret);
     }
 
+    public static String getSearchAuth() {
+        // 官网获取的 API Key 更新为你注册的
+        String clientId = "vsG3xHTE5QjbMBKCZKxdaPfn";
+        // 官网获取的 Secret Key 更新为你注册的
+        String clientSecret = "FGGYTjfLehRpQHsSgPZGhORAGrWPt5FL";
+        return getAuth(clientId, clientSecret);
+    }
     /**
      * 获取API访问token
      * 该token有一定的有效期，需要自行管理，当失效时需重新获取.

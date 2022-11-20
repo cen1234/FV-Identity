@@ -61,9 +61,63 @@
                                 <el-descriptions-item label="主要介绍">{{crawResult.description}}</el-descriptions-item>
                                 <el-descriptions-item label="果蔬益处">{{crawResult.benefit}}</el-descriptions-item>
                             </el-descriptions>
-                            <el-descriptions v-if="this.activeIndex === '3'" title="查看价格" direction="vertical" :column="2" border size="medium" style="color: #3d9fff;margin-top: 30px;width: 1600px;">
-
-                            </el-descriptions>
+                            <div class="price-result" v-if="this.activeIndex === '3'">
+                                <div class="statistical-result">
+                                    <div class="statistical-title">统计结果</div>
+                                </div>
+                                <div class="identity-result">
+                                    <div class="identity-title">识别结果</div>
+                                    <el-table
+                                            ref="multipleTable"
+                                            :data="tableData"
+                                            border
+                                            stripe
+                                            tooltip-effect="light"
+                                            :default-sort = "{prop: 'shop', order: 'ascending'}"
+                                            :header-cell-style="{backgroundColor:'#f1f3f4'}"
+                                            style="width: 1500px;margin: 0 auto;">
+                                        <el-table-column
+                                                type="index"
+                                                label="ID"
+                                                :index="1">
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="shop"
+                                                sortable
+                                                label="店家"
+                                        >
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="price"
+                                                label="价格(￥)"
+                                        >
+                                        </el-table-column>
+                                        <el-table-column prop="link" label="链接">
+                                            <template slot-scope="scope">
+                                                <el-link :href="scope.row.link" target="_blank" :underline="false">{{scope.row.link}}</el-link>
+                                            </template>
+                                        </el-table-column>
+                                        <el-table-column
+                                                prop="introduction"
+                                                label="商品简介"
+                                                :show-overflow-tooltip="true"
+                                        >
+                                        </el-table-column>
+                                    </el-table>
+                                    <div class="pagination">
+                                        <el-pagination
+                                                @size-change="handleSizeChange"
+                                                @current-change="handleCurrentChange"
+                                                :current-page="pageNum"
+                                                :page-sizes="[5]"
+                                                :page-size="pageSize"
+                                                layout="total, sizes, prev, pager, next, jumper"
+                                                :total="total"
+                                                style="font-weight: normal">
+                                        </el-pagination>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <el-button type="primary" :disabled="this.active < 2" size="medium" class="previous-step" @click="previous()">上一步</el-button>
@@ -95,7 +149,15 @@
                 picture:'',//要识别的图片
                 identityResult:{},//识别果蔬结果
                 crawResult:{},//爬取到的介绍
+                priceResult:[],//爬取到的价格和链接等信息
                 flagIntroduction:0,//如果为0，当激活‘查看介绍’菜单时，触发getIntroduction()方法，爬取数据；为1时，直接使用crawResult里的数据
+                flagPrice:0,//如果为0，当激活‘查看介绍’菜单时，触发getPrice()方法，爬取数据；为1时，直接使用priceResult里的数据
+                tableData:[],//价格表格数据
+                pageNum:1,//当前页
+                total:10,//数据总数
+                pageSize:5,//1页展示多少条数据
+                lowPrice:{},//从京东爬取的商品中最低价格的商品信息
+
             }
         },
         created() {
@@ -168,8 +230,12 @@
                             }
                             this.active = 3;
                             break;
-                    case "3": this.getPrice();
-                              break;
+                    case "3": if (this.flagIntroduction === 0) {
+                                this.getPrice();
+                                break;
+                            }
+                            this.active = 3;
+                            break;
                 }
             },
 
@@ -226,7 +292,42 @@
 
             //获取价格
             getPrice() {
+                request.get('/single/price',{
+                    params:{
+                        search:this.identityResult.name,
+                        logId:this.identityResult.logId,
+                        username:this.identityResult.username
+                    }
+                }).then(res => {
+                    //priceResult拿到了所有的价格信息，这里主要用于可视化统计
+                    this.priceResult = res.goods;
+                    //获取最低价格商品的相关信息
 
+                    //调用getPriceTable()是为了获取价格表格信息，因为priceResult数据太多不便于分页展示
+                    this.getPriceTable();
+                    this.$message({
+                        showClose: true,
+                        message: '获取果蔬价格成功！',
+                        type: 'success'
+                    });
+                    this.flagPrice = 1;
+                    this.active = 3;
+                })
+            },
+
+            //获取价格分页信息
+            getPriceTable() {
+                request.get('/single/page',{
+                    params:{
+                        pageNum:this.pageNum,
+                        pageSize:this.pageSize,
+                        username:this.user.username,
+                        search:this.identityResult.name
+                    }
+                }).then(res => {
+                    this.tableData = res.records;
+                    this.total = res.total;
+                })
             },
 
 
@@ -245,9 +346,17 @@
                         this.identify();
                     }
                 }
-            }
+            },
 
-
+            // 分页
+            handleSizeChange (pageSize) {
+                this.pageSize = pageSize;
+                this.getPriceTable();
+            },
+            handleCurrentChange (pageNum) {
+                this.pageNum = pageNum;
+                this.getPriceTable();
+            },
         }
     }
 </script>
@@ -322,13 +431,47 @@
     }
     .previous-step {
         position: absolute;
-        bottom: 50px;
+        bottom: 10px;
         right: 200px;
     }
     .next-step {
         position: absolute;
-        bottom: 50px;
+        bottom: 10px;
         right: 100px;
     }
+    .price-result {
 
+    }
+    .statistical-result {
+        margin: 30px auto;
+        width: 1500px;
+        height: 300px;
+        border: 1px solid #c1c5d0;
+    }
+    .statistical-title {
+        font-weight: bold;
+        color: #3d9fff;
+    }
+    .identity-result {
+        margin: 0 auto;
+        width: 1500px;
+        height: 280px;
+    }
+    .identity-title {
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #3d9fff;
+    }
+    .pagination {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+    }
+    .el-tooltip__popper{
+        max-width:20%;
+    }
+    .el-link.el-link--default {
+        font-size: 13px;
+        color: #3d9fff;
+    }
 </style>

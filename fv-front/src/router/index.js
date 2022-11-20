@@ -7,6 +7,8 @@ import Role from "../views/Role";
 import Menu from "../views/Menu";
 import Single from "../views/Single";
 import Multiple from "../views/Multiple";
+import Similar from "../views/Similar";
+import ImageStorage from "../views/ImageStorage";
 Vue.use(VueRouter)
 
 const routes = [
@@ -49,6 +51,16 @@ const routes = [
     path: '/multiple',
     name:'multiple',
     component: Multiple
+  },
+  {
+    path: '/similar',
+    name:'similar',
+    component: Similar
+  },
+  {
+    path:'/imageStorage',
+    name:'imageStorage',
+    component: ImageStorage
   }
 
 

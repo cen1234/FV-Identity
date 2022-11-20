@@ -13,6 +13,7 @@ public class UserDto {
     private String password;
     private String token;
     private String accessToken;
+    private String searchAccessToken;
 
     @TableField(exist = false)
     private List<Menu> menus;
