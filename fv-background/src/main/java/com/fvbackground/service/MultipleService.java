@@ -1,6 +1,8 @@
 package com.fvbackground.service;
 
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fvbackground.common.Ingredient;
 import com.fvbackground.entity.Log;
@@ -17,28 +19,35 @@ public class MultipleService  extends ServiceImpl<MultipleMapper, Multiple> {
     private LogService logService;
 
     //获取多个果蔬识别结果
-    public String multipleIdentity(String accessToken, String file) {
+    public String multipleIdentity(String accessToken, String file,String username) {
         Ingredient ingredient = new Ingredient();
-        return ingredient.ingredient(accessToken,file);
-    }
+        String result = ingredient.ingredient(accessToken,file);
 
-    //在数据库中存储结果
-    public boolean Save(Multiple multiple) {
-        //把日志写入log表中
+        //将string类型转换为JSON，解析里面的属性
+        JSONObject object = JSONObject.parseObject(result);
+        String logId = object.getString("log_id");
+        Integer resuleNum = object.getInteger("result_num");
+        List<Multiple> multiples = JSON.parseArray(object.getJSONArray("result").toJSONString(),Multiple.class);
+        for (Multiple item:multiples) {
+            item.setLogId(logId);
+            item.setUsername(username);
+        }
+
+        //将日志记录到数据库
         Log log = new Log();
+        log.setRecordId(logId);
+        log.setUsername(username);
         log.setPath("/multiple");
-        log.setUsername(multiple.getUsername());
-        log.setRecordId(multiple.getLogId());
-        log.setPhoto(multiple.getPhoto());
-        log.setResuleNum(multiple.getResuleNum());
-        boolean isLogSave = logService.save(log);
+        log.setPhoto(file);
+        logService.save(log);
 
-        //把result数据批量存入multiple表
-        List<Multiple> result = multiple.getResult();
-        boolean isMultipleSave = saveBatch(result,20);
-        return isLogSave && isMultipleSave;
+        //将识别结果存到multiple表中
+        saveBatch(multiples);
+
+        //将识别结果返回给前端
+        JSONObject obj = new JSONObject();
+        obj.put("log_id",logId);
+        obj.put("result",multiples);
+        return JSON.toJSONString(obj);
     }
-
-
-
 }

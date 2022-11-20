@@ -182,35 +182,33 @@
                     params:{
                         accessToken:this.user.accessToken,
                         file:this.picture,
+                        username:this.user.username
                     }
                 }).then(res => {
                         this.identityResult.logId = res.log_id;
-                        this.identityResult.resuleNum = res.result_num;
-                        this.identityResult.photo = this.picture;
-                        this.identityResult.username = this.user.username;
-                        this.identityResult.result = res.result.map(v => {
-                            return {...v,logId:this.identityResult.logId,username:this.user.username};
-                        });
-                        //将识别出来的结果存到数据库中
-                        request.post('/multiple',this.identityResult).then(res => {
-                            request.get('/multiple/page',{
-                                params:{
-                                    pageNum:this.pageNum,
-                                    pageSize:this.pageSize,
-                                    username:this.user.username,
-                                    logId:this.identityResult.logId
-                                }
-                            }).then(res => {
-                                this.tableData = res.records;
-                                this.total = res.total;
-                                this.$message({
-                                    showClose: true,
-                                    message: '识别成功',
-                                    type: 'success'
-                                });
-                                this.active = 3;
-                            })
-                        })
+                        //分页获取数据
+                        this.getMuliple();
+                        this.active = 3;
+                })
+            },
+
+            //分页获取数据
+            getMuliple() {
+                request.get('/multiple/page',{
+                    params:{
+                        pageNum:this.pageNum,
+                        pageSize:this.pageSize,
+                        username:this.user.username,
+                        logId:this.identityResult.logId
+                    }
+                }).then(res => {
+                    this.tableData = res.records;
+                    this.total = res.total;
+                    this.$message({
+                        showClose: true,
+                        message: '识别成功',
+                        type: 'success'
+                    });
                 })
             },
 
@@ -234,9 +232,11 @@
             // 分页
             handleSizeChange (pageSize) {
                 this.pageSize = pageSize;
+                this.getMuliple();
             },
             handleCurrentChange (pageNum) {
                 this.pageNum = pageNum;
+                this.getMuliple();
             },
 
 

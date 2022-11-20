@@ -21,17 +21,11 @@ public class MultipleIdentityController {
 //    多个果蔬识别
 //    -----------
     @GetMapping("/identity")
-    public String multipleIdentity(@RequestParam String accessToken, @RequestParam String file) {
-        return multipleService.multipleIdentity(accessToken,file);
+    public String multipleIdentity(@RequestParam String accessToken, @RequestParam String file,@RequestParam String username) {
+        return multipleService.multipleIdentity(accessToken,file,username);
     }
 
-//    --------
-//    将识别结果存储到数据库中
-//    --------
-    @PostMapping
-    public boolean save(@RequestBody Multiple multiple) {
-        return  multipleService.Save(multiple);
-    }
+
 
     //获取数据库中的结果
     @GetMapping("page")
