@@ -41,6 +41,14 @@ public class MultipleIdentityController {
     }
 
 
+//    -------
+//    获取果蔬类别
+//    -------
+    @GetMapping("/classification")
+    public String FVclassification(@RequestParam String accessToken, @RequestParam String file,@RequestParam String username) {
+        return multipleService.FVclassification(accessToken,file,username);
+    }
+
 
 
 }

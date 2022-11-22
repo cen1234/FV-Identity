@@ -9,6 +9,7 @@ import Single from "../views/Single";
 import Multiple from "../views/Multiple";
 import Similar from "../views/Similar";
 import ImageStorage from "../views/ImageStorage";
+import Classification from "../views/Classification";
 Vue.use(VueRouter)
 
 const routes = [
@@ -61,6 +62,11 @@ const routes = [
     path:'/imageStorage',
     name:'imageStorage',
     component: ImageStorage
+  },
+  {
+    path:'/classification',
+    name:'classification',
+    component: Classification
   }
 
 
