@@ -37,6 +37,7 @@ public class SingleService extends ServiceImpl<SingleMapper, Single> {
         //把日志写入log表中
         Log log = new Log();
         log.setPath("/single");
+        log.setName("单个识别");
         log.setUsername(single.getUsername());
         log.setRecordId(single.getLogId());
         log.setPhoto(single.getPhoto());

@@ -8,6 +8,7 @@ public class Log {
     private String recordId;
     private String username;
     private String path;
+    private String name;
     private String photo;
     private Integer resuleNum;
 }

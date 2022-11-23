@@ -64,6 +64,7 @@
                             <div class="price-result" v-if="this.activeIndex === '3'">
                                 <div class="statistical-result">
                                     <div class="statistical-title">统计结果</div>
+                                    <div id="statistical" style="width: 1450px;height: 270px;margin: 5px auto;"></div>
                                 </div>
                                 <div class="identity-result">
                                     <div class="identity-title">识别结果</div>
@@ -134,6 +135,7 @@
     import Header from "@/components/Header";
     import request from "../../utils/request";
 
+
     export default {
         name: "Single",
         components:{
@@ -157,6 +159,8 @@
                 total:10,//数据总数
                 pageSize:5,//1页展示多少条数据
                 lowPrice:{},//从京东爬取的商品中最低价格的商品信息
+                shopArray:[],//数据可视化柱状图x轴数据
+                priceArray:[],//数据可视化y轴数据
 
             }
         },
@@ -214,6 +218,10 @@
                 this.$refs.upload.clearFiles();
                 this.imageUrl = '';
                 this.active = 0;
+                this.flagIntroduction = 0;
+                this.flagPrice = 0;
+                this.shopArray = [];
+                this.priceArray = [];
             },
 
            //菜单激活
@@ -230,11 +238,14 @@
                             }
                             this.active = 3;
                             break;
-                    case "3": if (this.flagIntroduction === 0) {
+                    case "3": if (this.flagPrice === 0) {
                                 this.getPrice();
                                 break;
                             }
                             this.active = 3;
+                            setTimeout(() => {
+                                this.showPrice();
+                            },500);
                             break;
                 }
             },
@@ -301,8 +312,11 @@
                 }).then(res => {
                     //priceResult拿到了所有的价格信息，这里主要用于可视化统计
                     this.priceResult = res.goods;
-                    //获取最低价格商品的相关信息
-
+                    for(let item of this.priceResult) {
+                        this.shopArray.push(item.shop);
+                        this.priceArray.push(item.price);
+                    }
+                     this.showPrice();
                     //调用getPriceTable()是为了获取价格表格信息，因为priceResult数据太多不便于分页展示
                     this.getPriceTable();
                     this.$message({
@@ -328,6 +342,78 @@
                     this.tableData = res.records;
                     this.total = res.total;
                 })
+            },
+
+            //图表展示数据
+            showPrice() {
+                var myChart = this.$echarts.init(document.getElementById('statistical'));
+                var option;
+                option = {
+                    color:'#2f89cf',
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'shadow',
+                        }
+                    },
+                    grid: {
+                        left: '6%',
+                        right: '6%',
+                        bottom: '0%',
+                        top:'12%',
+                        containLabel: true
+                    },
+                    xAxis: {
+                        type: 'category',
+                        data: this.shopArray,
+                        axisTick:{
+                            show:false
+                        },
+                        axisLine:{
+                            show:true,
+                            lineStyle:{
+                                color:'#c1c5d0',
+                                width:1,
+                                type:'solid',
+                            },
+                        },
+                        axisLabel:{
+                            rotate:45,
+                            color:'#909399',
+                        },
+                    },
+                    yAxis: {
+                        type: 'value',
+                        show:true,
+                        name:'价格(元)',
+                        nameTextStyle:{
+                            color:'#909399',
+                        },
+                        axisLine:{
+                            show:true,
+                            lineStyle:{
+                                color:'#c1c5d0',
+                                width:1,
+                                type:'solid',
+                            },
+                        },
+                        splitLine:{
+                            show:false,
+                        },
+                        axisLabel:{
+                            color:'#909399',
+                        },
+                    },
+                    series: [
+                        {   name: '价格(元)',
+                            type: 'bar',
+                            barWidth:'30%',
+                            data: this.priceArray,
+
+                        }
+                    ]
+                };
+                myChart.setOption(option);
             },
 
 
@@ -446,7 +532,6 @@
         margin: 30px auto;
         width: 1500px;
         height: 300px;
-        border: 1px solid #c1c5d0;
     }
     .statistical-title {
         font-weight: bold;
@@ -466,12 +551,5 @@
         margin-top: 20px;
         display: flex;
         justify-content: center;
-    }
-    .el-tooltip__popper{
-        max-width:20%;
-    }
-    .el-link.el-link--default {
-        font-size: 13px;
-        color: #3d9fff;
     }
 </style>

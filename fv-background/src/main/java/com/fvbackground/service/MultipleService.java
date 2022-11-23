@@ -39,6 +39,7 @@ public class MultipleService  extends ServiceImpl<MultipleMapper, Multiple> {
         log.setRecordId(logId);
         log.setUsername(username);
         log.setPath("/multiple");
+        log.setName("多个识别");
         log.setPhoto(file);
         logService.save(log);
 
@@ -74,6 +75,7 @@ public class MultipleService  extends ServiceImpl<MultipleMapper, Multiple> {
         log.setRecordId(logId);
         log.setUsername(username);
         log.setPath("/classification");
+        log.setName("果蔬分类");
         log.setPhoto(file);
         logService.save(log);
 

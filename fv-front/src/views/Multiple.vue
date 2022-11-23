@@ -42,6 +42,7 @@
                         <div class="show-result" v-if="this.active >= 2">
                             <div class="statistical-result">
                                 <div class="statistical-title">统计结果</div>
+                                <div id="statistical-identity" style=""></div>
                             </div>
                             <div class="identity-result">
                                 <div class="identity-title">识别结果</div>
@@ -52,7 +53,7 @@
                                         stripe
                                         :default-sort = "{prop: 'name', order: 'ascending'}"
                                         :header-cell-style="{backgroundColor:'#f1f3f4'}"
-                                        style="width: 1500px;margin: 0 auto;">
+                                        style="width: 1500px;margin: 40px auto;">
                                     <el-table-column
                                             type="index"
                                             label="ID"
@@ -115,6 +116,7 @@
                 pageNum:1,//当前页
                 total:10,//数据总数
                 pageSize:5,//1页展示多少条数据
+                pieData:[],//饼图数据
             }
         },
         created() {
@@ -171,6 +173,7 @@
                 this.$refs.upload.clearFiles();
                 this.imageUrl = '';
                 this.active = 0;
+                this.pieData = [];
             },
 
 
@@ -185,6 +188,16 @@
                         username:this.user.username
                     }
                 }).then(res => {
+                       //获取识别的所有数据，用于饼图展示
+                        let temp = res.result;
+                        for(let item of temp) {
+                            let obj = {};
+                            obj.name = item.name;
+                            obj.value = item.score;
+                            this.pieData.push(obj);
+                        }
+                        //可视化展示数据
+                        this.showData();
                         this.identityResult.logId = res.log_id;
                         //分页获取数据
                         this.getMuliple();
@@ -210,6 +223,54 @@
                         type: 'success'
                     });
                 })
+            },
+
+            //可视化展示数据
+            showData() {
+                var myChart = this.$echarts.init(document.getElementById('statistical-identity'));
+                var option;
+                option = {
+                    color:[ '#96cdff',
+                            '#ffe9d5',
+                            '#fec001',
+                            "#afdc02",
+                            '#86a609',
+                            '#a5d5ff',
+                            "#d6ecff",
+                            '#c6e687',
+                            '#ffdfc3',
+                            "#f8b074",
+                            '#bce0ff',
+                            '#a4d6fe',
+                            "#9cc000",
+                        ],
+                    tooltip: {
+                        trigger: 'item',
+                        borderColor: "#e8e8e8",
+                        formatter: '{a} <br/>{b} : {c} ({d}%)'
+                    },
+                    legend: {
+                        orient: 'horizontal',
+                        left: 'center',
+                        top: 'bottom',
+                    },
+                    series: [
+                        {
+                            name: 'Access From',
+                            type: 'pie',
+                            radius: '50%',
+                            data: this.pieData,
+                            emphasis: {
+                                itemStyle: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
+                            }
+                        }
+                    ]
+                };
+             myChart.setOption(option);
             },
 
             //上一步
@@ -307,10 +368,10 @@
     }
     .show-result {
         position: absolute;
+        display: flex;
         top: 110px;
         width: 1700px;
         height: 400px;
-        /*background-color: #909399;*/
     }
     .previous-step {
         position: absolute;
@@ -323,18 +384,23 @@
         right: 100px;
     }
     .statistical-result {
-        margin: 30px auto;
-        width: 1500px;
+        margin-top: 30px;
+        width: 750px;
         height: 300px;
-        border: 1px solid #c1c5d0;
     }
     .statistical-title {
         font-weight: bold;
         color: #3d9fff;
     }
-    .identity-result {
+    #statistical-identity{
         margin: 0 auto;
-        width: 1500px;
+        width: 700px;
+        height: 270px;
+    }
+    .identity-result {
+        margin-top: 30px;
+        margin-left: 30px;
+        width: 750px;
         height: 280px;
     }
     .identity-title {

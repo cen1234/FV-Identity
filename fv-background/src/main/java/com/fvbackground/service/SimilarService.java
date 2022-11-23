@@ -32,6 +32,7 @@ public class SimilarService extends ServiceImpl<SimilarMapper, Similar> {
         log.setRecordId(logId);
         log.setUsername(username);
         log.setPath("/imageStorage");
+        log.setName("图片入库");
         log.setPhoto(file);
         logService.save(log);
 
@@ -58,6 +59,7 @@ public class SimilarService extends ServiceImpl<SimilarMapper, Similar> {
         log.setRecordId(logId);
         log.setUsername(username);
         log.setPath("/similar");
+        log.setName("相似图片");
         log.setPhoto(file);
         logService.save(log);
 

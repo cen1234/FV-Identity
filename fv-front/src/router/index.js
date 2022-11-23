@@ -11,6 +11,8 @@ import Similar from "../views/Similar";
 import ImageStorage from "../views/ImageStorage";
 import Classification from "../views/Classification";
 import Log from "../views/Log";
+import Statistical from "../views/Statistical";
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -73,6 +75,11 @@ const routes = [
     path:'/log',
     name:'log',
     component: Log
+  },
+  {
+    path:'/statistical',
+    name:'statistical',
+    component: Statistical
   }
 
 

@@ -62,7 +62,7 @@ public class UserController {
 //    ------
 //    查找全部
 //    ------
-
+    @GetMapping("/findAllUser")
     public List<User> find() {
         return userService.list();
     }

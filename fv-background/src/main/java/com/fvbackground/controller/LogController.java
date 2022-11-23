@@ -27,6 +27,17 @@ public class LogController {
     @Resource
     private LogService logService;
 
+
+//    -----
+//    获取全部
+//    ------
+    @GetMapping("/findAllLog")
+     public List<Log> findall() {
+        return logService.list();
+    }
+
+
+
 //    ------
 //    分页获取
 //    ------
