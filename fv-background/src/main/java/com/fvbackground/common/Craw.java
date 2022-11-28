@@ -50,16 +50,21 @@ public class Craw {
                 //6.Jsoup解析html
                 Document document =  Jsoup.parse(html);
 
-                //像js一样，通过标签获取title,主要内容，益处
-                String title = document.title();
-                String description = document.select("meta[name=description]").first().attr("content");
-                String benefit  = document.select("ol.para-list").get(2).text();
-
                 //将爬取到数据存入json对象中返回
                 JSONObject object = new JSONObject();
+
+                //像js一样，通过标签获取title,主要内容，益处
+                String title = document.title();
                 object.put("title",title);
+
+                String description = document.select("div.lemma-summary").text();
                 object.put("description",description);
-                object.put("benefit",benefit);
+
+                if (document.select("ol.para-list").size() >= 3 ) {
+                    String benefit  = document.select("ol.para-list").get(2).text();
+                    object.put("benefit",benefit);
+                }
+
                 return JSON.toJSONString(object);
             } else {
                 //如果返回状态不是200，比如404（页面不存在）等，根据情况做处理，这里略

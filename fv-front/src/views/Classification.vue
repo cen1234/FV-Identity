@@ -142,7 +142,7 @@
                 this.$message({
                     showClose: true,
                     message: '图片上传成功！',
-                    duration:1000,
+                    duration:500,
                     type: 'success'
                 });
             },
@@ -216,7 +216,7 @@
                     this.$message({
                         showClose: true,
                         message: '果蔬分类成功',
-                        duration:1000,
+                        duration:500,
                         type: 'success'
                     });
                      this.flag = 1;

@@ -73,6 +73,7 @@
                                 this.$message({
                                     showClose: true,
                                     message: '登陆成功',
+                                    duration:500,
                                     type: 'success'
                                 });
                                 //登录成功跳转到首页，并将用户信息存储到浏览器本地
@@ -106,7 +107,7 @@
                                 this.$message({
                                     showClose: true,
                                     message: '用户信息注册成功',
-                                    duration:1000,
+                                    duration:500,
                                     type: 'success'
                                 });
                                 //注册成功后，用户接下来完成登录

@@ -132,6 +132,7 @@
                 this.$message({
                     showClose: true,
                     message: '图片上传成功！',
+                    duration:500,
                     type: 'success'
                 });
             },
@@ -220,6 +221,7 @@
                     this.$message({
                         showClose: true,
                         message: '识别成功',
+                        duration:500,
                         type: 'success'
                     });
                 })
@@ -256,7 +258,7 @@
                     },
                     series: [
                         {
-                            name: 'Access From',
+                            name: '果蔬名称',
                             type: 'pie',
                             radius: '50%',
                             data: this.pieData,

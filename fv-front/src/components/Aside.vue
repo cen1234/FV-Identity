@@ -1,18 +1,18 @@
 <template>
     <div class="aside">
         <el-aside width="200px" style="height: 100%;">
-            <el-menu  style="border-right: none;" router active-text-color="#ffd04b">
+            <el-menu  style="border-right: none;" router active-text-color="#3d9fff">
                 <div v-for="item in menus" :key="item.id">
 <!--                    渲染不包含二级菜单菜单-->
                     <div v-if="item.children.length === 0">
-                        <a :href="item.path" class="aside-menu-index2">
-                            <i :class="item.icon" style="font-size: 18px;color: #909399;"></i>
-                            {{item.name}}
-                        </a>
+                        <el-menu-item :index="item.path">
+                            <i :class="item.icon"></i>
+                            <span slot="title">{{item.name}}</span>
+                        </el-menu-item>
                     </div>
 <!--                    渲染包含二级菜单的菜单-->
                     <div v-else>
-                        <el-submenu :index="item.id" >
+                        <el-submenu :index="item.id+''" >
                             <template slot="title"><i :class="item.icon"></i>{{item.name}}</template>
                             <el-menu-item-group>
                                 <div v-for="childItem in item.children">

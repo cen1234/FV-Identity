@@ -274,6 +274,7 @@
                                     this.$message({
                                         showClose: true,
                                         message: '用户信息添加成功！',
+                                        duration:500,
                                         type: 'success'
                                     });
                                 }
@@ -290,6 +291,7 @@
                                     this.$message({
                                         showClose: true,
                                         message: '用户信息编辑成功！',
+                                        duration:500,
                                         type: 'success'
                                     });
                                 }
@@ -314,6 +316,7 @@
                         this.$message({
                             showClose: true,
                             message: '用户信息删除成功！',
+                            duration:500,
                             type: 'success'
                         });
                     } else {
@@ -334,6 +337,7 @@
                         this.$message({
                             showClose: true,
                             message: '用户信息批量删除成功！',
+                            duration:500,
                             type: 'success'
                         });
                         this.idList=[];

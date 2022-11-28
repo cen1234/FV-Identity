@@ -5,8 +5,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fvbackground.common.Craw;
+import com.fvbackground.common.FruitVegetableSet;
 import com.fvbackground.common.Ingredient;
 import com.fvbackground.entity.Log;
+import com.fvbackground.entity.Multiple;
 import com.fvbackground.entity.ProductInformation;
 import com.fvbackground.entity.Single;
 import com.fvbackground.mapper.SingleMapper;
@@ -27,28 +29,39 @@ public class SingleService extends ServiceImpl<SingleMapper, Single> {
 
 
     //获取单个果蔬识别结果
-    public String SingleIdentity(String accessToken, String file) {
+    public String SingleIdentity(String accessToken, String file ,String username) {
         Ingredient ingredient = new Ingredient();
-        return ingredient.ingredient(accessToken,file);
-    }
+        String result = ingredient.ingredient(accessToken,file);
 
-    //将识别结果存储到数据库中
-    public boolean Save(Single single) {
+        //将string类型转换为JSON，解析里面的属性
+        JSONObject object = JSONObject.parseObject(result);
+        String logId = object.getString("log_id");
+        Integer resuleNum = object.getInteger("result_num");
+        Single single = JSON.parseArray(object.getJSONArray("result").toJSONString(),Single.class).get(0);
+
+        //将识别结果存储到single表中
+        single.setLogId(logId);
+        single.setResuleNum(resuleNum);
+        single.setUsername(username);
+        save(single);
+
         //把日志写入log表中
         Log log = new Log();
         log.setPath("/single");
         log.setName("单个识别");
-        log.setUsername(single.getUsername());
-        log.setRecordId(single.getLogId());
-        log.setPhoto(single.getPhoto());
-        log.setResuleNum(single.getResuleNum());
-        boolean isLogSave = logService.save(log);
+        log.setPhoto(file);
+        log.setRecordId(logId);
+        log.setResuleNum(resuleNum);
+        log.setUsername(username);
+        logService.save(log);
 
-        //把识别结果存入single表中
-        boolean isSingleSave =save(single);
+        //将结果返回给前端
+        JSONObject obj = new JSONObject();
+        obj.put("result",single);
 
-        return isLogSave && isSingleSave;
+        return JSON.toJSONString(obj);
     }
+
 
     //获取从百度百科爬到的内容
     public String getIntroduction(String search, String logId, String username) throws UnsupportedEncodingException {
@@ -63,7 +76,9 @@ public class SingleService extends ServiceImpl<SingleMapper, Single> {
         Single single = getOne(queryWrapper);
         single.setTitle(object.getString("title"));
         single.setDescription(object.getString("description"));
-        single.setBenefit(object.getString("benefit"));
+        if (object.getString("benefit") != null) {
+            single.setBenefit(object.getString("benefit"));
+        }
         //更新数据库
         updateById(single);
         //返回结果到前端

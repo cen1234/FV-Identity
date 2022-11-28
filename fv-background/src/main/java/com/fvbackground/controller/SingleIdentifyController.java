@@ -29,18 +29,11 @@ public class SingleIdentifyController {
 //    单个识别
 //    ------
     @GetMapping("/identity")
-    public String SingleIdentity(@RequestParam String accessToken,@RequestParam String file) {
-          return singleService.SingleIdentity(accessToken,file);
+    public String SingleIdentity(@RequestParam String accessToken,@RequestParam String file,@RequestParam String username) {
+          return singleService.SingleIdentity(accessToken,file,username);
     }
 
 
-//    --------
-//    将识别结果存储到数据库中
-//    --------
-    @PostMapping
-    public boolean save(@RequestBody Single single) {
-        return singleService.Save(single);
-    }
 
 
 //    ---------

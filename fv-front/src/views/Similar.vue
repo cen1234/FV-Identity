@@ -123,7 +123,7 @@
                 this.$message({
                     showClose: true,
                     message: '图片上传成功！',
-                    duration:1000,
+                    duration:500,
                     type: 'success'
                 });
             },
@@ -182,7 +182,7 @@
                    this.$message({
                        showClose: true,
                        message: '相似图片检索成功！',
-                       duration:1000,
+                       duration:500,
                        type: 'success'
                    });
                })

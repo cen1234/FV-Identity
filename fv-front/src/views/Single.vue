@@ -59,7 +59,7 @@
                             <el-descriptions v-if="this.activeIndex === '2'" title="查看介绍" direction="vertical" :column="1" border size="medium" style="color: #3d9fff;margin-top: 30px;width: 1600px;">
                                 <el-descriptions-item label="名称">{{crawResult.title}}</el-descriptions-item>
                                 <el-descriptions-item label="主要介绍">{{crawResult.description}}</el-descriptions-item>
-                                <el-descriptions-item label="果蔬益处">{{crawResult.benefit}}</el-descriptions-item>
+                                <el-descriptions-item label="果蔬益处|种植" v-if="crawResult.benefit != undefined ">{{crawResult.benefit}}</el-descriptions-item>
                             </el-descriptions>
                             <div class="price-result" v-if="this.activeIndex === '3'">
                                 <div class="statistical-result">
@@ -152,6 +152,7 @@
                 identityResult:{},//识别果蔬结果
                 crawResult:{},//爬取到的介绍
                 priceResult:[],//爬取到的价格和链接等信息
+                flagIdentity:0,//如果为0,触发identity()
                 flagIntroduction:0,//如果为0，当激活‘查看介绍’菜单时，触发getIntroduction()方法，爬取数据；为1时，直接使用crawResult里的数据
                 flagPrice:0,//如果为0，当激活‘查看介绍’菜单时，触发getPrice()方法，爬取数据；为1时，直接使用priceResult里的数据
                 tableData:[],//价格表格数据
@@ -177,6 +178,7 @@
                 this.$message({
                     showClose: true,
                     message: '图片上传成功！',
+                    duration:500,
                     type: 'success'
                 });
             },
@@ -218,10 +220,13 @@
                 this.$refs.upload.clearFiles();
                 this.imageUrl = '';
                 this.active = 0;
+                this.activeIndex = 1;
+                this.flagIdentity = 0;
                 this.flagIntroduction = 0;
                 this.flagPrice = 0;
                 this.shopArray = [];
                 this.priceArray = [];
+                this.crawResult = {};
             },
 
            //菜单激活
@@ -229,7 +234,11 @@
                 this.activeIndex = key;
                 this.active = 2;
                 switch (this.activeIndex) {
-                    case "1": this.active = 3;
+                    case "1": if (this.flagIdentity === 0) {
+                                  this.identify();
+                                  break;
+                               }
+                              this.active = 3;
                               break;
                     case "2":
                             if (this.flagIntroduction === 0) {
@@ -253,29 +262,23 @@
 
            //单个果蔬识别
             identify() {
-                this.identityResult = {};
                 //识别图片内容
                 request.get('/single/identity',{
                     params:{
                         accessToken:this.user.accessToken,
                         file:this.picture,
+                        username:this.user.username
                     }
                 }).then(res => {
-                    this.identityResult.logId = res.log_id + '';
-                    this.identityResult.username = this.user.username;
-                    this.identityResult.name = res.result[0].name;
-                    this.identityResult.score = res.result[0].score;
-                    this.identityResult.resuleNum  = res.result_num;
-                    this.identityResult.photo = this.picture;
-                    //将识别结果存储到数据库
-                    request.post('/single',this.identityResult).then(res => {
-                        this.$message({
-                            showClose: true,
-                            message: '识别成功',
-                            type: 'success'
-                        });
-                        this.active = 3;
-                    })
+                    this.identityResult = res.result;
+                    this.$message({
+                        showClose: true,
+                        message: '识别成功！',
+                        duration:500,
+                        type: 'success'
+                    });
+                    this.active = 3;
+                    this.flagIdentity = 1;
                 })
             },
 
@@ -290,10 +293,13 @@
                  }).then(res => {
                      this.crawResult.title =res.title.substring(0,res.title.indexOf('_'));
                      this.crawResult.description = res.description;
-                     this.crawResult.benefit = res.benefit;
+                      if (res.benefit !== null) {
+                          this.crawResult.benefit = res.benefit;
+                      }
                      this.$message({
                          showClose: true,
                          message: '获取果蔬介绍成功！',
+                         duration:500,
                          type: 'success'
                      });
                      this.flagIntroduction = 1;
@@ -322,6 +328,7 @@
                     this.$message({
                         showClose: true,
                         message: '获取果蔬价格成功！',
+                        duration:500,
                         type: 'success'
                     });
                     this.flagPrice = 1;
@@ -429,6 +436,7 @@
                 } else {
                     this.active++;
                     if ( this.active == 2) {
+                        this.flagIdentity = 1;
                         this.identify();
                     }
                 }
@@ -546,6 +554,10 @@
         font-weight: bold;
         margin-bottom: 5px;
         color: #3d9fff;
+    }
+    .el-link.el-link--default {
+        font-size: 13px;
+        color: #3d9fff!important;
     }
     .pagination {
         margin-top: 20px;

@@ -169,6 +169,7 @@
                                  this.$message({
                                      showClose: true,
                                      message: '用户信息编辑成功！',
+                                     duration:500,
                                      type: 'success'
                                  });
                                  let userMassage = JSON.parse(localStorage.getItem('user'));

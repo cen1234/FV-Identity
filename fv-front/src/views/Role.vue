@@ -229,6 +229,7 @@
                                     this.$message({
                                         showClose: true,
                                         message: '角色信息添加成功！',
+                                        duration:500,
                                         type: 'success'
                                     });
                                 }
@@ -245,6 +246,7 @@
                                     this.$message({
                                         showClose: true,
                                         message: '角色信息编辑成功！',
+                                        duration:500,
                                         type: 'success'
                                     });
                                 }
@@ -269,6 +271,7 @@
                       this.$message({
                           showClose: true,
                           message: '角色和菜单关系绑定成功！',
+                          duration:500,
                           type: 'success'
                       });
                       this.dialogRoleFormVisible = false;
@@ -290,6 +293,7 @@
                         this.$message({
                             showClose: true,
                             message: '角色信息删除成功！',
+                            duration:500,
                             type: 'success'
                         });
                     } else {
@@ -310,6 +314,7 @@
                         this.$message({
                             showClose: true,
                             message: '角色信息批量删除成功！',
+                            duration:500,
                             type: 'success'
                         });
                         this.idList=[];
