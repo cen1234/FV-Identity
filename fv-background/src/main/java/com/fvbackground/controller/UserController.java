@@ -139,6 +139,7 @@ public class UserController {
     public void export(HttpServletResponse response) throws Exception{
         //从数据库中查出所有数据
         List<User> list = userService.list();
+
         //在内存操作，写出到浏览器
         ExcelWriter writer = ExcelUtil.getWriter(true);
         //自定义标题名

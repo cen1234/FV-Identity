@@ -109,7 +109,7 @@
                                     :data="menuData"
                                     :props="props"
                                     show-checkbox
-                                    :default-expanded-keys="[2]"
+                                    :default-expanded-keys="[3,6,10]"
                                     :default-checked-keys="roleMenuArr"
                                     node-key="id"
                                     ref="tree"

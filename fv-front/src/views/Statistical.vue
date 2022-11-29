@@ -209,7 +209,7 @@
                 var myChart = this.$echarts.init(document.getElementById('user-sex-information'));
                 var option;
                 option = {
-                    color:[ '#c6e687', '#ffdfc3'],
+                    color:[ '#c6e687', '#ffdfc3','#a4d6fe'],
                     title: {
                         text: '用户性别统计',
                         left: 'center'

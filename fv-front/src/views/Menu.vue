@@ -101,7 +101,7 @@
                                                     v-for="item in options"
                                                     :key="item.name"
                                                     :label="item.name"
-                                                    :value="item.value">
+                                                    :value="item.name">
                                                 <i :class="item.value">    {{item.name}}</i>
                                             </el-option>
                                         </el-select>
@@ -168,9 +168,9 @@
             add() {
                 this.dialogFormVisible = true;
                 this.titleInfo="添加菜单信息";
+                this.MenuForm={};
                 //获取下拉框选项信息
                 this.getSelectOption();
-                this.MenuForm={};
             },
 
             //编辑菜单信息
@@ -187,6 +187,8 @@
                 this.dialogFormVisible = true;
                 this.titleInfo="添加子菜单信息";
                 this.MenuForm={};
+                //获取下拉框选项信息
+                this.getSelectOption();
                 if (pid) {
                     this.MenuForm.pid = pid;
                 }
@@ -300,6 +302,7 @@
             getSelectOption() {
                 request.get('/menu/icons').then(res => {
                     this.options = res;
+                    console.log(res)
                 })
             }
 

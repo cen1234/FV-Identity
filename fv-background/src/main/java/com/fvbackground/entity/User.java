@@ -1,14 +1,13 @@
 package com.fvbackground.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 import java.util.List;
 
 //使用lombok帮助简化代码，可以不写set,get方法
 @Data
+
 public class User {
 //    @TableId(type = IdType.AUTO)
     private Integer id;
