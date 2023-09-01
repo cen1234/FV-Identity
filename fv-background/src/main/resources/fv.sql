@@ -28,10 +28,10 @@ CREATE TABLE `user` (
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
 INSERT INTO `user` VALUES (1,'administrator','管理员','123456',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
-INSERT INTO `user` VALUES (2,'放假的小苗','普通用户','123456','小苗','女',10,'111@163.com','18709261622','西安市',NULL);
-INSERT INTO `user` VALUES (3,'要放假的小俱','普通用户','123456','小俱','女',10,'111@163.com','18709261622','西安市',NULL);
-INSERT INTO `user` VALUES (4,'小李加油','普通用户','123456','小李','女',10,'111@163.com','18709261622','西安市',NULL);
-INSERT INTO `user` VALUES (5,'小王加油','普通用户','123456','小王','女',10,'111@163.com','18709261622','西安市',NULL);
+INSERT INTO `user` VALUES (2,'zhangsan','普通用户','123456','小苗','女',10,'111@163.com','18709261622','西安市',NULL);
+INSERT INTO `user` VALUES (3,'lisi','普通用户','123456','小俱','女',10,'111@163.com','18709261622','西安市',NULL);
+INSERT INTO `user` VALUES (4,'wangwu','普通用户','123456','小李','女',10,'111@163.com','18709261622','西安市',NULL);
+INSERT INTO `user` VALUES (5,'xiaoliu','普通用户','123456','小王','女',10,'111@163.com','18709261622','西安市',NULL);
 UNLOCK TABLES;
 
 
